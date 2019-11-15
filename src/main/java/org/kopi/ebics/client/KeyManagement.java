@@ -81,6 +81,7 @@ public class KeyManagement {
     request.build();
     request.validate();
     session.getConfiguration().getTraceManager().trace(request);
+    System.out.println(sender);
     httpCode = sender.send(new ByteArrayContentFactory(request.prettyPrint()));
     Utils.checkHttpCode(httpCode);
     response = new KeyManagementResponseElement(sender.getResponseBody(), "INIResponse");

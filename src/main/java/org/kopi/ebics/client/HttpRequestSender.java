@@ -93,6 +93,7 @@ public class HttpRequestSender {
                 credsProvider.setCredentials(new AuthScope(proxyHost, proxyPort),
                     new UsernamePasswordCredentials(user, pwd));
             }
+            System.out.println(proxyHost);
         }
         HttpClientBuilder builder = HttpClientBuilder.create().setDefaultRequestConfig(
             configBuilder.build());

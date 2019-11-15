@@ -27,6 +27,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.URL;
 import java.security.GeneralSecurityException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -52,7 +54,7 @@ import org.kopi.ebics.interfaces.LetterManager;
 import org.kopi.ebics.interfaces.PasswordCallback;
 import org.kopi.ebics.io.IOUtils;
 import org.kopi.ebics.messages.Messages;
-import org.kopi.ebics.schema.h003.OrderAttributeType;
+import org.kopi.ebics.schema.h004.OrderAttributeType;
 import org.kopi.ebics.session.DefaultConfiguration;
 import org.kopi.ebics.session.EbicsSession;
 import org.kopi.ebics.session.OrderType;
@@ -75,6 +77,7 @@ public class EbicsClient {
     private Product defaultProduct;
     private User defaultUser;
 
+
     static {
         org.apache.xml.security.Init.init();
         java.security.Security.addProvider(new BouncyCastleProvider());
@@ -87,6 +90,11 @@ public class EbicsClient {
      *            the application configuration
      * @param properties
      */
+
+
+    private static File defaultRootDir = new File(System.getProperty("user.home") + File.separator + "ebics"
+            + File.separator + "client");
+
     public EbicsClient(Configuration configuration, ConfigProperties properties) {
         this.configuration = configuration;
         this.properties = properties;
@@ -614,6 +622,7 @@ public class EbicsClient {
     }
 
     public static void main(String[] args) throws Exception {
+
         Options options = new Options();
         addOption(options, OrderType.INI, "Send INI request");
         addOption(options, OrderType.HIA, "Send HIA request");
@@ -641,62 +650,87 @@ public class EbicsClient {
 
 
         CommandLine cmd = parseArguments(options, args);
+        System.out.println(cmd.toString());
 
-        File defaultRootDir = new File(System.getProperty("user.home") + File.separator + "ebics"
-            + File.separator + "client");
+//        for (String arg : args){
+//            System.out.println(arg);
+//        }
+
+
+//        File defaultRootDir = new File("");
+
         File ebicsClientProperties = new File(defaultRootDir, "ebics.txt");
         EbicsClient client = createEbicsClient(defaultRootDir, ebicsClientProperties);
 
-        if (cmd.hasOption("create")) {
-            client.createDefaultUser();
-        } else {
-            client.loadDefaultUser();
-        }
+//        client.createDefaultUser();
+        client.loadDefaultUser();
+//        client.createDefaultUser();
+//        client.sendINIRequest(client.defaultUser, client.defaultProduct);
+//        client.sendHIARequest(client.defaultUser, client.defaultProduct);
+//        client.sendHPBRequest(client.defaultUser, client.defaultProduct);
 
-        if (cmd.hasOption("letters")) {
-            client.createLetters(client.defaultUser, false);
-        }
+        DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+        Date dateStart= formatter.parse("2019-11-14");
+        Date dateEnd  = formatter.parse("2019-11-15");
 
-        if (hasOption(cmd, OrderType.INI)) {
-            client.sendINIRequest(client.defaultUser, client.defaultProduct);
-        }
-        if (hasOption(cmd, OrderType.HIA)) {
-            client.sendHIARequest(client.defaultUser, client.defaultProduct);
-        }
-        if (hasOption(cmd, OrderType.HPB)) {
-            client.sendHPBRequest(client.defaultUser, client.defaultProduct);
-        }
+//        client.sendFile(new File(defaultRootDir,""), client.defaultUser,
+//                client.defaultProduct, OrderType.CCT);
 
-        String outputFileValue = cmd.getOptionValue("o");
-        String inputFileValue = cmd.getOptionValue("i");
+        client.fetchFile(getOutputFile("Statement-2"), client.defaultUser,
+                client.defaultProduct, OrderType.HAA, false, null, null);
 
-        List<OrderType> fetchFileOrders = Arrays.asList(OrderType.STA, OrderType.VMK,
-            OrderType.ZDF, OrderType.ZB6, OrderType.PTK, OrderType.HAC, OrderType.Z01);
-
-        for (OrderType type : fetchFileOrders) {
-            if (hasOption(cmd, type)) {
-                client.fetchFile(getOutputFile(outputFileValue), client.defaultUser,
-                    client.defaultProduct, type, false, null, null);
-                break;
-            }
-        }
-
-        List<OrderType> sendFileOrders = Arrays.asList(OrderType.XKD, OrderType.FUL, OrderType.XCT,
-            OrderType.XE2, OrderType.CCT);
-        for (OrderType type : sendFileOrders) {
-            if (hasOption(cmd, type)) {
-                client.sendFile(new File(inputFileValue), client.defaultUser,
-                    client.defaultProduct, type);
-                break;
-            }
-        }
-
-        if (cmd.hasOption("skip_order")) {
-            int count = Integer.parseInt(cmd.getOptionValue("skip_order"));
-            while(count-- > 0) {
-                client.defaultUser.getPartner().nextOrderId();
-            }
-        }
+//
+//        if (cmd.hasOption("create")) {
+//            client.createDefaultUser();
+//        } else {
+//            client.loadDefaultUser();
+//        }
+//
+//        if (cmd.hasOption("letters")) {
+//            client.createDefaultUser();
+//        }
+//
+//        if (hasOption(cmd, OrderType.INI)) {
+//            client.sendINIRequest(client.defaultUser, client.defaultProduct);
+//        }
+//        if (hasOption(cmd, OrderType.HIA)) {
+//            client.sendHIARequest(client.defaultUser, client.defaultProduct);
+//        }
+//        if (hasOption(cmd, OrderType.HPB)) {
+//            client.sendHPBRequest(client.defaultUser, client.defaultProduct);
+//        }
+//
+//
+//        String outputFileValue = cmd.getOptionValue("o");
+//        String inputFileValue = cmd.getOptionValue("i");
+//
+//        List<OrderType> fetchFileOrders = Arrays.asList(OrderType.STA, OrderType.VMK,
+//            OrderType.ZDF, OrderType.ZB6, OrderType.PTK, OrderType.HAC, OrderType.Z01);
+//
+//        for (OrderType type : fetchFileOrders) {
+//            if (hasOption(cmd, type)) {
+//                client.fetchFile(getOutputFile(outputFileValue), client.defaultUser,
+//                    client.defaultProduct, type, false, null, null);
+//                break;
+//            }
+//        }
+//
+//        List<OrderType> sendFileOrders = Arrays.asList(OrderType.XKD, OrderType.FUL, OrderType.XCT,
+//            OrderType.XE2, OrderType.CCT);
+//        for (OrderType type : sendFileOrders) {
+//            if (hasOption(cmd, type)) {
+//                client.sendFile(new File(inputFileValue), client.defaultUser,
+//                    client.defaultProduct, type);
+//                break;
+//            }
+//        }
+//
+//        if (cmd.hasOption("skip_order")) {
+//            int count = Integer.parseInt(cmd.getOptionValue("skip_order"));
+//            while(count-- > 0) {
+//                client.defaultUser.getPartner().nextOrderId();
+//            }
+//        }
 
         client.quit();
     }
@@ -706,7 +740,7 @@ public class EbicsClient {
         if (outputFileName == null || outputFileName.isEmpty()) {
             throw new IllegalArgumentException("outputFileName not set");
         }
-        File file = new File(outputFileName);
+        File file = new File(defaultRootDir,outputFileName);
         if (file.exists()) {
             throw new IllegalArgumentException("file already exists " + file);
         }

@@ -194,6 +194,7 @@ public abstract class DefaultEbicsRootElement implements EbicsRootElement {
       iter = validationMessages.iterator();
       message = "";
       while (iter.hasNext()) {
+
 	if (!message.equals("")) {
 	  message += ";";
 	}

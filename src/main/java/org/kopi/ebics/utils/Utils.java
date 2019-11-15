@@ -309,6 +309,7 @@ public class Utils {
    */
   public static void checkHttpCode(int httpCode) throws EbicsException {
     if (httpCode != 200) {
+      System.out.println(httpCode);
       throw new EbicsException(Messages.getString("http.code.error",
 	                                          Constants.APPLICATION_BUNDLE_NAME,
 	                                          httpCode));

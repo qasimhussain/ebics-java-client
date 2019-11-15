@@ -21,8 +21,8 @@ package org.kopi.ebics.xml;
 
 import org.kopi.ebics.exception.EbicsException;
 import org.kopi.ebics.interfaces.ContentFactory;
-import org.kopi.ebics.schema.h003.HPBResponseOrderDataDocument;
-import org.kopi.ebics.schema.h003.HPBResponseOrderDataType;
+import org.kopi.ebics.schema.h004.HPBResponseOrderDataDocument;
+import org.kopi.ebics.schema.h004.HPBResponseOrderDataType;
 
 /**
  * The <code>HPBResponseOrderDataElement</code> contains the public bank
@@ -48,7 +48,9 @@ public class HPBResponseOrderDataElement extends DefaultResponseElement {
    * @return the authentication bank certificate.
    */
   public byte[] getBankX002Certificate() {
-    return response.getAuthenticationPubKeyInfo().getX509Data().getX509CertificateArray(0);
+//  TODO : QQ> hd change: returns a list of certificates now
+//    return response.getAuthenticationPubKeyInfo().getX509Data().getX509CertificateArray();
+    return response.getAuthenticationPubKeyInfo().getX509Data().getX509CertificateArray()[0];
   }
 
   /**
@@ -56,7 +58,9 @@ public class HPBResponseOrderDataElement extends DefaultResponseElement {
    * @return the encryption bank certificate.
    */
   public byte[] getBankE002Certificate() {
-    return response.getEncryptionPubKeyInfo().getX509Data().getX509CertificateArray(0);
+//  TODO : QQ> hd change: returns a list of certificates now
+//    return response.getEncryptionPubKeyInfo().getX509Data().getX509Certificate();
+    return response.getEncryptionPubKeyInfo().getX509Data().getX509CertificateArray()[0];
   }
 
   public byte[] getBankE002PublicKeyModulus() {

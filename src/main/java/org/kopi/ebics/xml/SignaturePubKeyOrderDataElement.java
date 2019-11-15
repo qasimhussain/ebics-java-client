@@ -78,7 +78,7 @@ public class SignaturePubKeyOrderDataElement extends DefaultEbicsRootElement {
 
   @Override
   public byte[] toByteArray() {
-    addNamespaceDecl("ds", "http://www.w3.org/2000/09/xmldsig#");
+    addNamespaceDecl("urn", "http://www.w3.org/2000/09/xmldsig#");
     setSaveSuggestedPrefixes("http://www.ebics.org/S001", "");
 
     return super.toByteArray();
